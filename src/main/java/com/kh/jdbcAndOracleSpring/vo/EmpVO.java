@@ -19,5 +19,5 @@ public class EmpVO {
     private BigDecimal sal;
     private BigDecimal comm;
     private int deptNO;
-
 }
+

@@ -1,5 +1,6 @@
 package com.kh.jdbcAndOracleSpring.dao;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.kh.jdbcAndOracleSpring.vo.EmpVO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,10 +21,29 @@ public class EmpDAO {
         String sql = "SELECT * FROM EMP";
         return jdbcTemplate.query(sql, new EmpRowMapper());
     }
-    public void empInsert (EmpVO vo) {
+    public boolean empInsert (EmpVO vo) {
+        int result = 0;
         String sql = "INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, vo.getEmpNO(), vo.getName(), vo.getJob(), vo.getDate(), vo.getSal(), vo.getComm(), vo.getDeptNO());
+        try {
+            result = jdbcTemplate.update(sql, vo.getEmpNO(), vo.getName(), vo.getJob(), vo.getMgr(), vo.getDate(), vo.getSal(), vo.getComm(), vo.getDeptNO());
+        } // 영향 받는 행의 개수를 반환
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return result > 0; // 영향 받는 행이 0 초과면은 True
     }
+    public boolean empDelete(EmpVO vo){
+        int result = 0;
+        String query = "DELETE FROM EMP WHERE ENAME = ?";
+        try{
+            result = jdbcTemplate.update(query, vo.getName());
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return result > 0;
+    }
+
 
     private static class EmpRowMapper implements RowMapper<EmpVO> {
         @Override
